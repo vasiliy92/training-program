@@ -1,1 +1,165 @@
-placeholder
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20→30 | 50→100 — Программа тренировок</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <div class="logo">20→30 | 50→100</div>
+  <div class="week-badge" id="weekBadge">Неделя 1</div>
+</div>
+
+<!-- SCREEN: HOME -->
+<div class="screen active" id="screenHome">
+  <div class="overview-grid">
+    <div class="overview-stat">
+      <div class="value purple" id="homePullups">128</div>
+      <div class="label">Подтягиваний / нед</div>
+    </div>
+    <div class="overview-stat">
+      <div class="value green" id="homePushups">243</div>
+      <div class="label">Отжиманий / нед</div>
+    </div>
+    <div class="overview-stat">
+      <div class="value orange">3</div>
+      <div class="label">Тренировки / нед</div>
+    </div>
+    <div class="overview-stat">
+      <div class="value purple">12</div>
+      <div class="label">Недель всего</div>
+    </div>
+  </div>
+
+  <div class="section-title">Мезоцикл</div>
+  <div class="meso-tabs" id="mesoTabs">
+    <div class="meso-tab active" data-meso="1">1: База</div>
+    <div class="meso-tab" data-meso="2">2: Рост</div>
+    <div class="meso-tab" data-meso="3">3: Цель</div>
+  </div>
+
+  <div class="section-title">Неделя</div>
+  <div class="week-selector" id="weekSelector">
+    <div class="week-btn active" data-week="1">1</div>
+    <div class="week-btn" data-week="2">2</div>
+    <div class="week-btn" data-week="3">3</div>
+    <div class="week-btn deload" data-week="4">4 ⚡</div>
+  </div>
+
+  <div class="section-title">Тренировки</div>
+  <div id="dayCards"></div>
+</div>
+
+<!-- SCREEN: WORKOUT -->
+<div class="screen" id="screenWorkout">
+  <button class="back-btn" onclick="showScreen('home')">← Назад</button>
+  <div id="workoutContent"></div>
+</div>
+
+<!-- SCREEN: EXERCISE -->
+<div class="screen" id="screenExercise">
+  <button class="back-btn" onclick="showScreen('workout')">← Назад</button>
+  <div id="exerciseContent"></div>
+</div>
+
+<!-- SCREEN: WARMUP -->
+<div class="screen" id="screenWarmup">
+  <button class="back-btn" onclick="showScreen('home')">← Назад</button>
+  <div class="exercise-header">
+    <h2>Разминка</h2>
+    <div class="meta">12 минут • Обязательно перед каждой тренировкой</div>
+  </div>
+  <ul class="warmup-list">
+    <li><span class="warmup-name">Круговые движения руками</span><span class="warmup-qty">10 вперёд + 10 назад</span></li>
+    <li><span class="warmup-name">Растяжка резинки перед собой</span><span class="warmup-qty">15 раз</span></li>
+    <li><span class="warmup-name">Подтягивания на лопатках</span><span class="warmup-qty">6 раз</span></li>
+    <li><span class="warmup-name">YTWL</span><span class="warmup-qty">5 каждую букву</span></li>
+    <li><span class="warmup-name">Вращение наружу (эспандер)</span><span class="warmup-qty">2 × 15</span></li>
+  </ul>
+  <div class="section-title" style="margin-top:20px">Пояснения</div>
+  <div class="card" style="font-size:13px;line-height:1.5;color:var(--text2)">
+    <strong style="color:var(--text)">Круговые движения</strong> — разогревает плечевой сустав, улучшает кровоток.<br><br>
+    <strong style="color:var(--text)">Растяжка резинки</strong> — включает мышцы между лопатками. Без них плечи забирают лишнюю нагрузку.<br><br>
+    <strong style="color:var(--text)">На лопатках</strong> — стартовая фаза подтягивания. Учит начинать движение лопатками, а не дёргать руками.<br><br>
+    <strong style="color:var(--text)">YTWL</strong> — тренирует все части ротаторной манжеты. Лучшая профилактика боли в плече.<br><br>
+    <strong style="color:var(--text)">Вращение наружу</strong> — ключевое упражнение для баланса плеча при 100 кг. Подтягивания нагружают внутренние ротаторы (широчайшая, большая круглая), но не наружные. Дисбаланс = риск импинджмента. Эспандер закрепите на уровне локтя, локоть прижат к ребру, тяните резину наружу.
+  </div>
+</div>
+
+<!-- SCREEN: COOLDOWN -->
+<div class="screen" id="screenCooldown">
+  <button class="back-btn" onclick="showScreen('home')">← Назад</button>
+  <div class="exercise-header">
+    <h2>Заминка</h2>
+    <div class="meta">5 минут • После каждой тренировки</div>
+  </div>
+  <ul class="warmup-list">
+    <li><span class="warmup-name">Вис на перекладине</span><span class="warmup-qty">30 с × 2</span></li>
+    <li><span class="warmup-name">Растяжка грудных (дверной проём)</span><span class="warmup-qty">30 с каждая сторона</span></li>
+    <li><span class="warmup-name">Растяжка бицепса</span><span class="warmup-qty">30 с каждая сторона</span></li>
+    <li><span class="warmup-name">Face pulls (резина)</span><span class="warmup-qty">12 × 2</span></li>
+    <li><span class="warmup-name">Вращение наружу (гантель 2-3 кг)</span><span class="warmup-qty">10 × 2</span></li>
+  </ul>
+  <div class="section-title" style="margin-top:20px">Пояснения</div>
+  <div class="card" style="font-size:13px;line-height:1.5;color:var(--text2)">
+    <strong style="color:var(--text)">Вис</strong> — растягивает широчайшие, снимает компрессию плеча после подтягиваний.<br><br>
+    <strong style="color:var(--text)">Растяжка грудных</strong> — отжимания укорачивают грудные. Без растяжки плечи «заваливаются» вперёд.<br><br>
+    <strong style="color:var(--text)">Растяжка бицепса</strong> — бицепс работает в каждом подтягивании. Без растяжки тянет плечо вперёд.<br><br>
+    <strong style="color:var(--text)">Face pulls</strong> — упражнение №1 для здоровья плеч. Тренирует заднюю дельту и вращатели наружу.<br><br>
+    <strong style="color:var(--text)">Вращение наружу</strong> — укрепляет маленькие мышцы-стабилизаторы плеча. У тяжёлых атлетов они почти всегда слабые.
+  </div>
+</div>
+
+<!-- SCREEN: FLAGS -->
+<div class="screen" id="screenFlags">
+  <div class="exercise-header">
+    <h2>Красные флаги</h2>
+    <div class="meta">Прекратите тренировку при этих симптомах</div>
+  </div>
+  <div class="flag-item">
+    <div class="flag-symptom">Боль в передней части плеча при подъёме руки</div>
+    <div class="flag-action">Импинджмент. Прекратить подтягивания/отжимания на 1-2 нед. Только разминка и Face pulls. Не проходит — к врачу.</div>
+  </div>
+  <div class="flag-item">
+    <div class="flag-symptom">Боль по внутренней стороне локтя</div>
+    <div class="flag-action">Медиальный эпикондилит. Прекратить подтягивания на 2 нед. Только негативные подтягивания и вращения предплечья.</div>
+  </div>
+  <div class="flag-item">
+    <div class="flag-symptom">Острая боль в бицепсе (внизу плеча)</div>
+    <div class="flag-action">Тендинит или разрыв. Прекратить ВСЮ нагрузку. К врачу. Это серьёзно.</div>
+  </div>
+  <div class="flag-item">
+    <div class="flag-symptom">Онемение / покалывание в пальцах</div>
+    <div class="flag-action">Компрессия нерва. Возможно, слишком сильно сжимаете перекладину. Отдых 1 неделя.</div>
+  </div>
+  <div class="flag-item">
+    <div class="flag-symptom">Боль в пояснице при подтягиваниях</div>
+    <div class="flag-action">Переразгибание. Напрягите пресс и ягодицы, подкрутите таз. С болью при правильной технике — только австралийские подтягивания 1 нед.</div>
+  </div>
+
+  <div class="section-title">Чередование хвата</div>
+  <table class="grip-table">
+    <tr><td>Понедельник</td><td>Прямой (ладони от себя), чуть шире плеч</td></tr>
+    <tr><td>Среда</td><td>Прямой (кластер-суперсет) + Обратный (суперсет Б)</td></tr>
+    <tr><td>Пятница</td><td>Нейтральный (V-рукоятка) или прямой</td></tr>
+  </table>
+  <div class="why-box" style="margin-top:12px">
+    <strong>Зачем:</strong> Смена хвата меняет угол нагрузки на локти и предплечья. Каждая тренировка нагружает связки по-разному — профилактика воспаления.
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="active" onclick="showScreen('home')"><span class="icon">🏋️</span>Программа</button>
+  <button onclick="showScreen('warmup')"><span class="icon">🔥</span>Разминка</button>
+  <button onclick="showScreen('cooldown')"><span class="icon">🧘</span>Заминка</button>
+  <button onclick="showScreen('flags')"><span class="icon">🚨</span>Травмы</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
