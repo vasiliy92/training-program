@@ -1,3 +1,4 @@
+const PROGRAM = { 1: MESO1, 2: MESO2, 3: MESO3 };
 let currentMeso = 1;
 let currentWeek = 1;
 let currentDay = null;
