@@ -62,7 +62,7 @@ html += `
 html += '</div>';
 const doneCount = completedSets[key].size;
 const pct = Math.round(doneCount / sets * 100);
-html += `<div style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCount}/${sets}</div>
+html += `<div class="progress-text" style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCount}/${sets}</div>
 <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
 if (ex.rest) {
 html += `
@@ -126,7 +126,7 @@ const totalPull = ex.pullTotal * sets;
 const totalPush = ex.pushTotal * sets;
 const donePull = ex.pullTotal * doneCountCS;
 const donePush = ex.pushTotal * doneCountCS;
-html += `<div style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCountCS}/${sets} раундов | ${donePull}/${totalPull} подт + ${donePush}/${totalPush} отж</div>
+html += `<div class="progress-text" style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCountCS}/${sets} раундов | ${donePull}/${totalPull} подт + ${donePush}/${totalPush} отж</div>
 <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pctCS}%"></div></div>`;
 if (ex.rest) {
 html += `
@@ -165,9 +165,6 @@ html += `<div class="exercise-header">
 ${ex.weight ? `<div class="meta" style="color:#e17055;font-weight:600">Вес: ${ex.weight}</div>` : ''}
 ${ex.progression ? `<div class="meta" style="font-size:12px;font-style:italic">Прогрессия: ${ex.progression}</div>` : ''}
 </div>`;
-if (ex.isCluster) {
-html += `<div class="cluster-explain"><strong>Формат:</strong> ${ex.clusterFormat}</div>`;
-}
 if (ex.isLadder) {
 const steps = reps.split('-');
 const totalReps = steps.reduce((a, b) => a + parseInt(b), 0);
@@ -198,7 +195,7 @@ html += `
 html += '</div>';
 const doneCountL = completedSets[key].size;
 const pctL = Math.round(doneCountL / sets * 100);
-html += `<div style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCountL}/${sets} раунда</div>
+html += `<div class="progress-text" style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCountL}/${sets} раунда</div>
 <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pctL}%"></div></div>`;
 if (ex.rest) {
 html += `
@@ -253,7 +250,7 @@ html += `
 html += '</div>';
 const doneCount = completedSets[key].size;
 const pct = Math.round(doneCount / sets * 100);
-html += `<div style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCount}/${sets}</div>
+html += `<div class="progress-text" style="font-size:13px;color:var(--text2);margin-bottom:4px">Прогресс: ${doneCount}/${sets}</div>
 <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
 if (ex.rest) {
 html += `
@@ -304,8 +301,12 @@ const doneCount = completedSets[key].size;
 const pct = Math.round(doneCount / sets * 100);
 const fills = document.querySelectorAll('.progress-bar-fill');
 if (fills.length) fills[0].style.width = pct + '%';
-const progText = document.querySelector('.exercise-content ~ div[style*="font-size:13px"]') ||
-document.querySelector('#exerciseContent div[style*="Прогресс"]');
+const progText = document.querySelector('.progress-text');
+if (progText) {
+let label = 'подходов';
+if (ex.isClusterSuperset || ex.isLadder) label = 'раундов';
+progText.textContent = `Прогресс: ${doneCount}/${sets} ${label}`;
+}
 }
 function startTimer(total) {
 if (timerRunning) {

@@ -1,8 +1,6 @@
 const MESO2 = {
 name: "Рост",
 weeks: [5,6,7,8],
-deloadWeek: 8,
-pullVol: "~148", pushVol: "~280",
 days: {
 mon: {
 label: "ПОНЕДЕЛЬНИК", css: "mon", title: "Сила", subtitle: "Плавная прогрессия — объём растёт на ~15%",

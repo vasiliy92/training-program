@@ -85,15 +85,67 @@ if (navMap[name] !== undefined) {
 document.querySelectorAll('.bottom-nav button')[navMap[name]].classList.add('active');
 }
 if (name === 'home') renderHome();
+if (name === 'flags') renderGripTable();
 window.scrollTo(0,0);
+}
+function renderGripTable() {
+const gt = document.getElementById('gripTable');
+if (!gt) return;
+const wedLabel = currentMeso === 3
+? 'Прямой (традиционный суперсет) + Прямой с паузой (суперсет Б)'
+: 'Прямой (кластер-суперсет) + Обратный (суперсет Б)';
+gt.innerHTML = `
+<tr><td>Понедельник</td><td>Прямой (ладони от себя), чуть шире плеч</td></tr>
+<tr><td>Среда</td><td>${wedLabel}</td></tr>
+<tr><td>Пятница</td><td>Нейтральный (V-рукоятка) или прямой</td></tr>
+`;
+}
+function calcExerciseVolume(e) {
+const sets = getAdjustedSets(e.sets);
+let pull = 0, push = 0, count = 1;
+if (e.isSuperset && e.parts) {
+e.parts.forEach(p => {
+const name = p.label.toLowerCase();
+const reps = getPartReps(p);
+if (name.includes('подтяг')) pull += sets * reps;
+if (name.includes('отжиман')) push += sets * reps;
+});
+} else if (e.isClusterSuperset) {
+pull = sets * e.pullTotal;
+push = sets * e.pushTotal;
+} else {
+const name = e.name.toLowerCase();
+if (typeof e.reps === 'number') {
+const reps = e.fixedReps ? getPartReps(e) : getAdjustedReps(e.reps);
+if (name.includes('подтяг')) pull += sets * reps;
+if (name.includes('отжиман')) push += sets * reps;
+} else if (typeof e.reps === 'string' && e.reps.includes('-')) {
+const total = e.reps.split('-').reduce((a, b) => a + parseInt(b), 0);
+if (name.includes('подтяг')) pull += sets * total;
+if (name.includes('отжиман')) push += sets * total;
+}
+}
+return { pull, push, count };
 }
 function renderHome() {
 const meso = getMesoData();
 const wb = document.getElementById('weekBadge');
 const realWeek = getWeekOffset() + currentWeek;
 wb.textContent = isDeload() ? `Неделя ${realWeek} — Разгрузка` : `Неделя ${realWeek}`;
-document.getElementById('homePullups').textContent = meso.pullVol;
-document.getElementById('homePushups').textContent = meso.pushVol;
+let weekPull = 0, weekPush = 0;
+const days = ['mon','wed','fri'];
+days.forEach(day => {
+const dd = getDayData(day);
+if (isDeload() && day === 'wed') return;
+dd.exercises.forEach(e => {
+if (e.name.startsWith('Тест:')) return;
+const v = calcExerciseVolume(e);
+weekPull += v.pull;
+weekPush += v.push;
+});
+});
+document.getElementById('homePullups').textContent = '~' + weekPull;
+document.getElementById('homePushups').textContent = '~' + weekPush;
 document.querySelectorAll('.meso-tab').forEach(t => {
 t.classList.toggle('active', parseInt(t.dataset.meso) === currentMeso);
 });
@@ -109,7 +161,6 @@ ws.appendChild(d);
 }
 const dc = document.getElementById('dayCards');
 dc.innerHTML = '';
-const days = ['mon','wed','fri'];
 days.forEach(day => {
 const dd = getDayData(day);
 const card = document.createElement('div');
@@ -126,25 +177,11 @@ card.removeAttribute('tabindex');
 } else {
 let totalPull = 0, totalPush = 0, exerciseCount = 0;
 dd.exercises.forEach(e => {
-if (e.isSuperset && e.parts) {
-e.parts.forEach(p => {
-const name = p.label.toLowerCase();
-const sets = getAdjustedSets(e.sets);
-const reps = getPartReps(p);
-if (name.includes('подтяг')) totalPull += sets * reps;
-if (name.includes('отжиман')) totalPush += sets * reps;
-});
-exerciseCount++;
-} else {
-const name = e.name.toLowerCase();
-const sets = getAdjustedSets(e.sets);
-if (typeof e.reps === 'number') {
-const reps = getAdjustedReps(e.reps);
-if (name.includes('подтяг')) totalPull += sets * reps;
-if (name.includes('отжиман')) totalPush += sets * reps;
-}
-exerciseCount++;
-}
+if (e.name.startsWith('Тест:')) { exerciseCount++; return; }
+const v = calcExerciseVolume(e);
+totalPull += v.pull;
+totalPush += v.push;
+exerciseCount += v.count;
 });
 card.innerHTML = `
 <div class="day-label">${dd.label}</div>
@@ -200,7 +237,7 @@ html += `<div class="card test-card"><p style="font-size:13px;line-height:1.5">�
 } else if (isDeload()) {
 currentExercises = dd.exercises.filter(e => !e.name.startsWith('Тест:'));
 } else {
-html += `<div class="card test-card"><p style="font-size:13px;line-height:1.5">${dd.testNote}</p></div>`;
+html += `<div class="card test-card"><p style="font-size:13px;line-height:1.5">📋 <strong>Сегодня тестовый день.</strong> Сначала выполните основные упражнения, затем — тест на максимум. Между основными и тестом — отдых 5 минут.</p></div>`;
 }
 }
 currentExercises.forEach((ex, i) => {
@@ -209,6 +246,9 @@ const reps = typeof ex.reps === 'number' ? getAdjustedReps(ex.reps) : ex.reps;
 let restText = '';
 if (ex.rest) restText += `Отдых между подходами: ${fmtRest(ex.rest)}`;
 if (ex.restInner) restText += ` | Внутри: ${fmtRest(ex.restInner)}`;
+if (ex.name.startsWith('Тест:') && i > 0 && !currentExercises[i-1].name.startsWith('Тест:')) {
+html += `<div class="test-section-divider"><span>📋 ТЕСТОВАЯ СЕКЦИЯ</span></div>`;
+}
 if (ex.isSuperset) {
 const partsSummary = ex.parts.map(p => {
 const r = getPartReps(p);
@@ -243,8 +283,7 @@ ${ex.isLadder ? `<p>${sets} раунда × лестница (${reps}) | Зап�
 ex.isEmom ? `<p>${ex.emomMinutes} мин | ${reps} повторений/мин | Запас: ${ex.reserve}</p>` :
 `<p>${sets} × ${reps} | Запас: ${ex.reserve} | ${ex.pace}</p>
 ${ex.weight ? `<p class="superset-weight">Вес: ${ex.weight}</p>` : ''}
-${ex.progression ? `<p class="superset-progression">Прогрессия: ${ex.progression}</p>` : ''}
-${ex.isCluster ? `<p style="margin-top:4px;font-size:12px;color:var(--green)">${ex.clusterFormat}</p>` : ''}`}
+${ex.progression ? `<p class="superset-progression">Прогрессия: ${ex.progression}</p>` : ''}`}
 ${restText && !ex.isLadder ? `<p style="margin-top:4px;font-size:12px;color:var(--accent2)">${restText}</p>` : ''}
 </div>`;
 });

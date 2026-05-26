@@ -449,6 +449,20 @@
     background: linear-gradient(135deg, rgba(108,92,231,0.15), rgba(162,155,254,0.1));
     border: 1px solid rgba(108,92,231,0.3);
   }
+  .test-section-divider {
+    text-align: center;
+    margin: 16px 0 12px;
+    padding: 10px 0;
+    border-top: 2px dashed rgba(108,92,231,0.4);
+    border-bottom: 2px dashed rgba(108,92,231,0.4);
+  }
+  .test-section-divider span {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent2);
+  }
 
   /* Scrollbar */
   ::-webkit-scrollbar { width: 4px; }

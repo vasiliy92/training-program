@@ -1,8 +1,6 @@
 const MESO1 = {
 name: "База",
 weeks: [1,2,3,4],
-deloadWeek: 4,
-pullVol: "~128", pushVol: "~243",
 days: {
 mon: {
 label: "ПОНЕДЕЛЬНИК", css: "mon", title: "Сила", subtitle: "Антагонистические суперсеты — тяга + жим, экономия времени",
