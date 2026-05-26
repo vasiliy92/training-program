@@ -121,6 +121,7 @@ if (isDeload() && day === 'wed') {
 card.innerHTML = `<div class="day-label">${dd.label}</div><div class="day-title">Отдых</div><div class="day-subtitle">Разгрузочная неделя — среда свободна</div>`;
 card.style.opacity = '0.4';
 card.style.cursor = 'default';
+card.style.pointerEvents = 'none';
 card.removeAttribute('tabindex');
 } else {
 let totalPull = 0, totalPush = 0, exerciseCount = 0;
