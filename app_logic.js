@@ -7,6 +7,7 @@ let timerInterval = null;
 let timerSeconds = 0;
 let timerRunning = false;
 let completedSets = {};
+let currentExercises = [];
 function getWeightKey(part) { return 'w_' + part.label.replace(/[^a-zа-яё0-9]/gi, ''); }
 const _ls = {
 get(key) { try { return localStorage.getItem(key); } catch(e) { return null; } },
@@ -178,14 +179,30 @@ function openWorkout(day) {
 currentDay = day;
 const dd = getDayData(day);
 const wc = document.getElementById('workoutContent');
-let html = `<div class="exercise-header"><h2>${dd.title}</h2><div class="meta">${dd.label} • ${dd.subtitle}</div></div>`;
+let title = dd.title;
+if (isDeload()) title += ' <span class="deload-badge">РАЗГРУЗКА</span>';
+let html = `<div class="exercise-header"><h2>${title}</h2><div class="meta">${dd.label} • ${dd.subtitle}</div></div>`;
 if (dd.isCluster) {
 html += `<div class="cluster-explain"><strong>Кластеры:</strong> ${dd.clusterExplain}</div>`;
 }
-if (dd.isTest && !isDeload()) {
+currentExercises = dd.exercises;
+if (dd.isTest) {
+if (currentWeek === 2) {
+currentExercises = dd.exercises.filter(e => !e.name.startsWith('Тест:'));
+currentExercises.push(
+{ name: "Подтягивания (доп.)", sets: 2, reps: 6, rest: 120, reserve: 3, pace: "Медленно вниз (2 с), мощно вверх",
+technique: ["Техника та же"], why: "Вместо теста — дополнительный объём. Тест только на неделях 9 и 11." },
+{ name: "Отжимания (доп.)", sets: 2, reps: 12, rest: 90, reserve: 3, pace: "Медленно вниз (2 с), пауза 1 с, мощно вверх",
+technique: ["Техника та же"], why: "Вместо теста — дополнительный объём. Тест только на неделях 9 и 11." }
+);
+html += `<div class="card test-card"><p style="font-size:13px;line-height:1.5">На неделе 10 тест НЕ делается. Вместо него — 2 дополнительных подхода подтягиваний по 6 и 2 подхода отжиманий по 12. Тест только на неделях 9 и 11.</p></div>`;
+} else if (isDeload()) {
+currentExercises = dd.exercises.filter(e => !e.name.startsWith('Тест:'));
+} else {
 html += `<div class="card test-card"><p style="font-size:13px;line-height:1.5">${dd.testNote}</p></div>`;
 }
-dd.exercises.forEach((ex, i) => {
+}
+currentExercises.forEach((ex, i) => {
 const sets = getAdjustedSets(ex.sets);
 const reps = typeof ex.reps === 'number' ? getAdjustedReps(ex.reps) : ex.reps;
 let restText = '';

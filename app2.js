@@ -1,7 +1,6 @@
 function openExercise(idx) {
 currentExerciseIdx = idx;
-const dd = getDayData(currentDay);
-const ex = dd.exercises[idx];
+const ex = currentExercises[idx];
 const sets = getAdjustedSets(ex.sets);
 const reps = typeof ex.reps === 'number' ? getAdjustedReps(ex.reps) : ex.reps;
 const ec = document.getElementById('exerciseContent');
@@ -280,8 +279,7 @@ ec.innerHTML = html;
 showScreen('exercise');
 }
 function changeWeight(exIdx, partIdx, direction) {
-const dd = getDayData(currentDay);
-const ex = dd.exercises[exIdx];
+const ex = currentExercises[exIdx];
 const part = ex.parts[partIdx];
 if (!part.weightKg) return;
 if (direction > 0) increaseWeight(part);
@@ -300,8 +298,7 @@ completedSets[key].add(setIdx);
 el.classList.add('done');
 el.parentElement.querySelector('.set-num').classList.add('done');
 }
-const dd = getDayData(currentDay);
-const ex = dd.exercises[exIdx];
+const ex = currentExercises[exIdx];
 const sets = getAdjustedSets(ex.sets);
 const doneCount = completedSets[key].size;
 const pct = Math.round(doneCount / sets * 100);
