@@ -228,9 +228,9 @@ if (dd.isTest) {
 if (currentWeek === 2) {
 currentExercises = dd.exercises.filter(e => !e.name.startsWith('Тест:'));
 currentExercises.push(
-{ name: "Подтягивания (доп.)", sets: 2, reps: 6, rest: 120, reserve: 3, pace: "Медленно вниз (2 с), мощно вверх",
+{ name: "Подтягивания (доп.)", sets: 2, reps: 6, fixedReps: true, rest: 120, reserve: 3, pace: "Медленно вниз (2 с), мощно вверх",
 technique: ["Техника та же"], why: "Вместо теста — дополнительный объём. Тест только на неделях 9 и 11." },
-{ name: "Отжимания (доп.)", sets: 2, reps: 12, rest: 90, reserve: 3, pace: "Медленно вниз (2 с), пауза 1 с, мощно вверх",
+{ name: "Отжимания (доп.)", sets: 2, reps: 12, fixedReps: true, rest: 90, reserve: 3, pace: "Медленно вниз (2 с), пауза 1 с, мощно вверх",
 technique: ["Техника та же"], why: "Вместо теста — дополнительный объём. Тест только на неделях 9 и 11." }
 );
 html += `<div class="card test-card"><p style="font-size:13px;line-height:1.5">На неделе 10 тест НЕ делается. Вместо него — 2 дополнительных подхода подтягиваний по 6 и 2 подхода отжиманий по 12. Тест только на неделях 9 и 11.</p></div>`;
